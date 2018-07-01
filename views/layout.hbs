@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{title}}</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io.connect();
+      socket.on('connected', function (data) {
+        console.log('log connected');
+        document.getElementById('title').innerHTML  = data.package.name + ' ' + data.package.version
+        socket.emit('init', {})
+      });
+      socket.on('log', function (data) {
+        console.info('log', data); 
+        var d = JSON.stringify(data, ' ', 2).replace(/\n/g, '<br>'). replace(/ /g, '&nbsp;')
+        d = new Date() + ' ' + d
+        document.getElementById('log').innerHTML  = document.getElementById('log').innerHTML + '<br>' + d
+      });
+    </script>
+  </head>
+  <body>
+    {{{body}}}
+  </body>
+</html>

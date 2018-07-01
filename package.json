@@ -1,0 +1,45 @@
+{
+  "name": "firmware-manager",
+  "version": "1.0.0",
+  "description": "Webinterface to manage global NPM installations",
+  "scripts": {
+    "start": "node ./bin/www",
+    "dev": "node node_modules/nodemon/bin/nodemon.js ./bin/www",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/s-a/firmware-manager.git"
+  },
+  "author": "Stephan Ahlf",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/s-a/firmware-manager/issues"
+  },
+  "homepage": "https://github.com/s-a/firmware-manager#readme",
+  "dependencies": {
+    "bunyan": "^1.8.12",
+    "bunyan-format": "^0.2.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~3.1.0",
+    "express": "~4.16.3",
+    "hbs": "~4.0.1",
+    "http-errors": "~1.6.3",
+    "morgan": "~1.9.0",
+    "npm": "^6.1.0",
+    "npm-check-global-updates": "^1.0.5",
+    "socket.io": "^2.1.1"
+  },
+  "devDependencies": {
+    "eslint": "^5.0.1",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-local": "^1.0.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-standard": "^3.1.0",
+    "git-branch": "^2.0.1",
+    "nodemon": "^1.17.5",
+    "stylelint": "^9.3.0",
+    "stylelint-config-standard": "^18.2.0"
+  }
+}

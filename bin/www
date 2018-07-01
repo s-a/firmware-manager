@@ -1,0 +1,150 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+const app = require('../app')
+const debug = require('debug')('firmware-manager:server')
+const http = require('http')
+const path = require('path')
+/*
+const appDir = path.dirname(require.main.filename)
+process.chdir(path.join(appDir, '..')) */
+
+const bunyan = require('bunyan')
+const bformat = require('bunyan-format')
+const formatOut = bformat({
+	outputMode: 'long'
+})
+const pkg = require(path.join(__dirname, '../package.json'))
+const logOptions = {
+	level: process.env.LOGLEVEL || 'debug',
+	name: `${pkg.name}-v${pkg.version}`,
+	src: true,
+	stream: formatOut
+}
+const logger = bunyan.createLogger(logOptions)
+
+/**
+ * Get port from environment and store in Express.
+ */
+
+const port = normalizePort(process.env.PORT || '7719')
+app.set('port', port)
+
+/**
+ * Create HTTP server.
+ */
+
+const server = http.createServer(app)
+const io = require('socket.io')(server)
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port)
+server.on('error', onError)
+server.on('listening', onListening)
+
+io.on('connection', async function (socket) {
+	socket.emit('connected', {
+		state: 'connected',
+		package: pkg
+	})
+
+	socket.on('init', async function (data) {
+		try {
+			socket.emit('log', {
+				state: 'checkGlobalUpdates'
+			})
+
+			const npm = require('npm')
+			npm.on('log', function (message) {
+				// log the progress of the installation
+				logger.info(message)
+			})
+			/* 
+				const s = npm.load({
+					loaded: true,
+					progress: false,
+					loglevel: 'error',
+					global: true,
+					depth: 0
+				}, async function (err) {
+					npm.commands.list(['-g'], function (err, npmResult) {
+						logger.info(npmResult)
+					})
+				})
+			 */
+			const checkGlobalUpdates = require('npm-check-global-updates')
+
+			checkGlobalUpdates()
+				.then((result) => {
+					logger.info(result)
+					socket.emit('log', {
+						software: result
+					})
+				})
+		} catch (e) {
+			logger.error(e)
+		}
+	})
+})
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+	const port = parseInt(val, 10)
+
+	if (isNaN(port)) {
+		// named pipe
+		return val
+	}
+
+	if (port >= 0) {
+		// port number
+		return port
+	}
+
+	return false
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+	if (error.syscall !== 'listen') {
+		throw error
+	}
+
+	const bind = typeof port === 'string' ?
+		'Pipe ' + port :
+		'Port ' + port
+
+	// handle specific listen errors with friendly messages
+	switch (error.code) {
+		case 'EACCES':
+			logger.error(bind + ' requires elevated privileges')
+			process.exit(1)
+		case 'EADDRINUSE':
+			logger.error(bind + ' is already in use')
+			process.exit(1)
+		default:
+			throw error
+	}
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+	const addr = server.address()
+	const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port
+	logger.info('Listening on ' + bind)
+}
