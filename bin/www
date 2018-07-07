@@ -8,6 +8,7 @@ const app = require('../app')
 const debug = require('debug')('firmware-manager:server')
 const http = require('http')
 const path = require('path')
+const getGitVersionTags = require('./../git-version-tags.js')
 /*
 const appDir = path.dirname(require.main.filename)
 process.chdir(path.join(appDir, '..')) */
@@ -59,34 +60,10 @@ io.on('connection', async function (socket) {
 			socket.emit('log', {
 				state: 'checkGlobalUpdates'
 			})
+			const v = await getGitVersionTags()
 
-			const npm = require('npm')
-			npm.on('log', function (message) {
-				// log the progress of the installation
-				logger.info(message)
-			})
-			/* 
-				const s = npm.load({
-					loaded: true,
-					progress: false,
-					loglevel: 'error',
-					global: true,
-					depth: 0
-				}, async function (err) {
-					npm.commands.list(['-g'], function (err, npmResult) {
-						logger.info(npmResult)
-					})
-				})
-			 */
-			const checkGlobalUpdates = require('npm-check-global-updates')
+			socket.emit('loaded', v)
 
-			checkGlobalUpdates()
-				.then((result) => {
-					logger.info(result)
-					socket.emit('log', {
-						software: result
-					})
-				})
 		} catch (e) {
 			logger.error(e)
 		}

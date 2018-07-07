@@ -5,13 +5,46 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <script src="/socket.io/socket.io.js"></script>
     <script>
+      var versions = {} 
       var socket = io.connect();
+
+      var channels = ['master', 'development']
+
+      function populate() {
+        var select = document.getElementById('versions')
+        for (let v = 0; v < versions.versions.length; v++) {
+          var ver = versions.versions[v] 
+          var branches = ver.branches
+          var channel = 'dev'
+          if (ver.branches.indexOf('beta') !== -1){
+            channel = 'beta'
+          }
+          if (ver.branches.indexOf('master') !== -1){
+            channel = 'stable'
+          }
+          select.options[select.options.length] = new Option(ver.tag + ' (' + channel + ')', ver.hash) 
+          if (ver.hash === versions.currentHash){
+            select.options[select.options.length-1].selected = 'selected'
+          }
+        } 
+      }
+
       socket.on('connected', function (data) {
         console.log('log connected');
         document.getElementById('title').innerHTML  = data.package.name + ' ' + data.package.version
         socket.emit('init', {})
       });
       socket.on('log', function (data) {
+        console.info('log', data); 
+        var d = JSON.stringify(data, ' ', 2).replace(/\n/g, '<br>'). replace(/ /g, '&nbsp;')
+        d = new Date() + ' ' + d
+        document.getElementById('log').innerHTML  = document.getElementById('log').innerHTML + '<br>' + d
+      });
+      socket.on('loaded', function (data) {
+        versions = data
+        populate()
+        document.getElementById('progress').style.display = 'none'
+        console.info('loaded', data); 
         console.info('log', data); 
         var d = JSON.stringify(data, ' ', 2).replace(/\n/g, '<br>'). replace(/ /g, '&nbsp;')
         d = new Date() + ' ' + d

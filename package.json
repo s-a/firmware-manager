@@ -4,7 +4,7 @@
   "description": "Webinterface to manage global NPM installations",
   "scripts": {
     "start": "node ./bin/www",
-    "dev": "node node_modules/nodemon/bin/nodemon.js ./bin/www",
+    "dev": "node node_modules/nodemon/bin/nodemon.js --watch . ./bin/www",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,6 +26,7 @@
     "hbs": "~4.0.1",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.0",
+    "nodegit": "^0.22.1",
     "npm": "^6.1.0",
     "npm-check-global-updates": "^1.0.5",
     "socket.io": "^2.1.1"
