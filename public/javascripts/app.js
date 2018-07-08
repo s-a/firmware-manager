@@ -50,7 +50,6 @@
 		var o = new window.Option('(select a version)', '')
 		selectVersions.options[selectVersions.options.length] = o
 
-		var versionFound = false
 		for (let v = 0; v < versions.versions.length; v++) {
 			var ver = versions.versions[v]
 			var channel = getChannel(ver.branches)
@@ -58,7 +57,6 @@
 				selectVersions.options[selectVersions.options.length] = new window.Option(ver.tag + ' (' + selectedChannelName + ')', ver.hash)
 				if (ver.hash === versions.currentHash) {
 					selectVersions.options[selectVersions.options.length - 1].selected = 'selected'
-					versionFound = true
 				}
 			}
 			if (ver.hash === versions.currentHash) {
@@ -81,7 +79,7 @@
 	}
 
 	function useVersion(e) {
-		e.disabled = 'disabled'
+		e.disabled = 'disabled' // eslint-disable-line no-param-reassign
 		var selectVersions = $('versions')
 		var commit = selectVersions.options[selectVersions.selectedIndex].value
 		socket.emit('checkout', {
