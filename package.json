@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "node node_modules/nodemon/bin/nodemon.js --watch . ./bin/www",
-    "eslint": "node node_modules/eslint/bin/eslint.js ./**/*.js",
+    "eslint": "node node_modules/eslint/bin/eslint.js ./public/javascripts/app.js ./git-version-tags.js ./app.js",
     "bump": "npm test && npm version patch && git push --no-verify && git push --tags --no-verify",
     "test": "npm run eslint"
   },
