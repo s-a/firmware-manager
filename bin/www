@@ -43,6 +43,11 @@ app.set('port', port)
 const server = http.createServer(app)
 const io = require('socket.io')(server)
 
+const addMinutes = function (dt, minutes) {
+	return new Date(dt.getTime() + minutes * 60000)
+}
+
+let versionCache = {}
 /**
  * Listen on provided port, on all network interfaces.
  */
@@ -62,7 +67,17 @@ io.on('connection', async function (socket) {
 			socket.emit('log', {
 				state: 'checkGlobalUpdates'
 			})
-			const v = await getGitVersionTags()
+			let v = versionCache.v
+			if (!v || new Date() > addMinutes(versionCache.dt, 10)) {
+				v = await getGitVersionTags()
+				versionCache = {
+					dt: new Date(),
+					v
+				}
+				v.chached = false
+			} else {
+				v.chached = true
+			}
 			socket.emit('loaded', v)
 		} catch (e) {
 			logger.error(e)
@@ -76,6 +91,7 @@ io.on('connection', async function (socket) {
 			socket.emit('log', `checkout ${data.commit}`)
 			await checkout(data.commit)
 			socket.emit('checkout-done')
+			versionCache = {}
 		} catch (e) {
 			logger.error(e)
 			socket.emit('error', e)

@@ -1,37 +1,68 @@
 <div class="container">
   <div class="row">
     <div class="col-sm">
-      <h1 id="title">loading...</h1>
-    </div> 
-  </div>
-  <div class="row" id="progress"> 
-    <div class="col-sm">
-      <img width="32" src="/images/progress.gif" alt="" srcset=""> <span>loading...</span>
-    </div>
-  </div>
-  <div class="row" id="main" style="display:none"> 
-    <div class="col-sm">
-      <div id="hint-success" class="alert alert-success" role="alert" style="display:none">
-        The firmware is up to date. <span class="current-version"></span>
-      </div>
-      <div id="hint-warning" class="alert alert-warning" role="alert" style="display:none">
-        The firmware is not up to date. <span class="current-version"></span>
-      </div>
-      
-      <select id="channels" onchange="populateVersions()">
-        <option id="channel-stable" value="stable">stable</option>
-        <option id="channel-beta" value="beta">beta</option>
-        <option id="channel-development" value="development">development</option>
-      </select>
+      <div class="jumbotron">
+        <h1 class="display-4" id="title" style="text-transform: capitalize;">loading...</h1>
+        <div class="row" id="progress"> 
+          <div class="col-sm">
+            <img width="32" src="/images/progress.gif" alt="" srcset=""> <span>loading...</span>
+          </div>
+        </div>
+        <div class="row" id="main" style="display:none"> 
+          <div class="col-sm">
+            <div id="hint-success" class="alert alert-success" role="alert" style="display:none">
+              &#10003; Firmware is up to date. {{!-- <span class="current-version"></span> --}}
+            </div>
+            <div id="hint-warning" class="alert alert-warning" role="alert" style="display:none">
+              <div class="row"> 
+                  <div class="col-sm">
+                    <svg width="64" class="octicon octicon-bell" viewBox="0 0 14 16" version="1.1" aria-hidden="true"><path fill-rule="evenodd" d="M13.99 11.991v1H0v-1l.73-.58c.769-.769.809-2.547 1.189-4.416.77-3.767 4.077-4.996 4.077-4.996 0-.55.45-1 .999-1 .55 0 1 .45 1 1 0 0 3.387 1.229 4.156 4.996.38 1.879.42 3.657 1.19 4.417l.659.58h-.01zM6.995 15.99c1.11 0 1.999-.89 1.999-1.999H4.996c0 1.11.89 1.999 1.999 1.999z"></path></svg>
+                    The firmware is not up to date. {{!-- <span class="current-version"></span> --}}
+                  </div>
+                  <div class="col-sm">
+                    <button onclick="selectLatestVersion()" type="button" class="btn btn-block btn-dark">
+                      Select latest version
+                    </button>
+                  </div>
+              </div>
+            </div>
+             
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="channels">Channel</label>
+              </div>
+              <select class="custom-select" id="channels" onchange="populateVersions()"> 
+                <option id="channel-stable" value="stable">stable</option>
+                <option id="channel-beta" value="beta">beta</option>
+                <option id="channel-development" value="development">development</option>
+              </select>
+            </div>
 
-      <select id="versions"></select>
-      <button onclick="useVersion(this)" type="button" class="btn btn-dark">Use version</button>
-    </div> 
-  </div>
-  <hr>
-  <div class="row">
-    <div class="col-sm">
-      <code id="log">LOG:</code>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="versions">Version</label>
+              </div>
+              <select class="custom-select" id="versions" onchange="enableActionButton()">  
+              </select>
+            </div>
+ 
+            <button id="actionButton" onclick="useVersion(this)" disabled="disabled" type="button" class="btn btn-dark btn-block ">Use version</button>
+          </div> 
+        </div>
+        <hr class="my-4"> 
+        <button class="btn btn-light btn-sm" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+          Show log
+        </button>
+        <div class="collapse" id="collapseExample">
+          <hr class="my-4"> 
+          <div class="card card-body">
+            <code id="log">LOG:</code>
+          </div>
+        </div>      
+      </div> 
     </div> 
   </div>
 </div> 
+<div id="snackbar">
+  Click "Use version" to activate the selected version on your device.
+</div>

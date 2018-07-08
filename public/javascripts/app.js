@@ -54,7 +54,7 @@
 			var ver = versions.versions[v]
 			var channel = getChannel(ver.branches)
 			if (selectedChannelName === channel) {
-				selectVersions.options[selectVersions.options.length] = new window.Option(ver.tag + ' (' + selectedChannelName + ')', ver.hash)
+				selectVersions.options[selectVersions.options.length] = new window.Option(ver.tag, ver.hash)
 				if (ver.hash === versions.currentHash) {
 					selectVersions.options[selectVersions.options.length - 1].selected = 'selected'
 				}
@@ -62,7 +62,7 @@
 			if (ver.hash === versions.currentHash) {
 				var currentVersionLables = c('current-version')
 				for (var i = 0; i < currentVersionLables.length; i++) {
-					currentVersionLables[i].innerHTML = ver.tag + ' (' + channel + ' channel)'
+					currentVersionLables[i].innerHTML = ver.version
 				}
 			}
 		}
@@ -76,6 +76,11 @@
 			}
 		}
 		initialLoad = false
+	}
+
+	function enableActionButton() {
+		var actionButton = $('actionButton')
+		actionButton.disabled = ''
 	}
 
 	function useVersion(e) {
@@ -125,6 +130,24 @@
 		populateVersions()
 	})
 
+	function message() {
+		var x = $('snackbar')
+		x.className = 'show'
+		setTimeout(function () {
+			x.className = x.className.replace('show', '')
+		}, 7000)
+	}
+
+	function selectLatestVersion() {
+		var x = $('versions')
+		x.selectedIndex = 1
+		var actionButton = $('actionButton')
+		actionButton.disabled = ''
+		message()
+	}
+
 	window.useVersion = useVersion // eslint-disable-line no-param-reassign
 	window.populateVersions = populateVersions // eslint-disable-line no-param-reassign
+	window.enableActionButton = enableActionButton // eslint-disable-line no-param-reassign
+	window.selectLatestVersion = selectLatestVersion // eslint-disable-line no-param-reassign
 })(window, window.io)
