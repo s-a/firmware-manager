@@ -8,6 +8,7 @@ const app = require('../app')
 const debug = require('debug')('firmware-manager:server')
 const http = require('http')
 const path = require('path')
+const fs = require('fs')
 const getGitVersionTags = require('./../git-version-tags.js').getGitVersionTags
 const checkout = require('./../git-version-tags.js').checkout
 /*
@@ -26,7 +27,7 @@ const logOptions = {
 	src: true,
 	stream: formatOut
 }
-const logger = bunyan.createLogger(logOptions)
+const logger = global.logger = bunyan.createLogger(logOptions)
 
 /**
  * Get port from environment and store in Express.
@@ -65,19 +66,19 @@ io.on('connection', async function (socket) {
 			socket.emit('loaded', v)
 		} catch (e) {
 			logger.error(e)
-			socket.emit('log', e)
+			socket.emit('error', e)
 		}
 	})
 
-	socket.on('checkout', async function (commit) {
+	socket.on('checkout', async function (data) {
 		try {
-			socket.emit('log', `checkout ${commit}`)
-			await checkout(commit)
-			const v = await getGitVersionTags()
-			socket.emit('loaded', v)
+			fs.writeFileSync(path.join(process.env.REPOSITORY_FOLDER, 'lock.file'), 'data')
+			socket.emit('log', `checkout ${data.commit}`)
+			await checkout(data.commit)
+			socket.emit('checkout-done')
 		} catch (e) {
 			logger.error(e)
-			socket.emit('log', e)
+			socket.emit('error', e)
 		}
 	})
 })

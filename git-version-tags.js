@@ -1,8 +1,12 @@
 const semver = require('semver')
 const util = require('util')
 const fs = require('fs')
+const path = require('path')
 const exec = util.promisify(require('child_process').exec)
-const gitFolder = process.env.REPOSITORY_FOLDER
+let gitFolder = process.env.REPOSITORY_FOLDER
+
+gitFolder = path.join(gitFolder, '.git')
+const repositoryFolder = path.normalize(process.env.REPOSITORY_FOLDER)
 
 if (!fs.existsSync(gitFolder)) {
 	throw new Error(`Repository folder "${gitFolder}" does not exist.`)
@@ -14,9 +18,9 @@ const commands = {
 	fetch: `git --git-dir ${gitFolder} fetch --all`,
 	ref: `git --git-dir ${gitFolder} for-each-ref --format="%(refname:short)|%(object)" refs/tags/`,
 	contains: `git --git-dir ${gitFolder} branch --format="%(refname)" --contains`,
-	checkout: `git --git-dir ${gitFolder} checkout`,
-	stash: `git --git-dir ${gitFolder} stash`,
-	stashDrop: `git --git-dir ${gitFolder} stash drop`
+	checkout: `git --git-dir ${gitFolder} --work-tree=${repositoryFolder} checkout`,
+	stash: `git --git-dir ${gitFolder} --work-tree=${repositoryFolder} stash`,
+	stashDrop: `git --git-dir ${gitFolder} --work-tree=${repositoryFolder} stash drop`
 }
 
 function compare(a, b) {
@@ -27,15 +31,26 @@ function compare(a, b) {
 	}
 }
 
-async function execute(command) {
-	const {
-		stdout,
-		stderr
-	} = await exec(command)
-	if (stderr) {
-		throw new Error(stderr)
+async function execute(command, silent) {
+	global.logger.debug(command)
+	let result
+	try {
+		const {
+			stdout,
+			stderr
+		} = await exec(command, {
+			cwd: repositoryFolder
+		})
+		if (stderr && silent !== true) {
+			throw new Error(stderr)
+		}
+		result = stdout
+	} catch (error) {
+		if (silent !== true) {
+			throw new Error(error)
+		}
 	}
-	return stdout
+	return result
 }
 
 async function getGitVersionTags() {
@@ -78,9 +93,9 @@ async function getGitVersionTags() {
 }
 
 async function checkout(commit) {
-	await execute(commands.stash)
-	await execute(commands.stashDrop)
-	await execute(commands.checkout + ' ' + commit)
+	await execute(commands.stash, true)
+	await execute(commands.stashDrop, true)
+	await execute(commands.checkout + ' ' + commit, true)
 }
 
 module.exports = {

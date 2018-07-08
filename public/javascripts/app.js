@@ -80,7 +80,8 @@
 		initialLoad = false
 	}
 
-	function useVersion() {
+	function useVersion(e) {
+		e.disabled = 'disabled'
 		var selectVersions = $('versions')
 		var commit = selectVersions.options[selectVersions.selectedIndex].value
 		socket.emit('checkout', {
@@ -99,6 +100,18 @@
 		var d = JSON.stringify(data, ' ', 2).replace(/\n/g, '<br>').replace(/ /g, '&nbsp;')
 		d = new Date() + ' ' + d
 		$('log').innerHTML = $('log').innerHTML + '<br>' + d
+	})
+
+	socket.on('error', function (data) {
+		console.error('log', data)
+		var d = JSON.stringify(data, ' ', 2).replace(/\n/g, '<br>').replace(/ /g, '&nbsp;')
+		d = new Date() + ' ' + d
+		$('log').innerHTML = $('log').innerHTML + '<br>' + d
+	})
+
+	socket.on('checkout-done', function () {
+		console.info('log')
+		window.location.reload()
 	})
 
 	socket.on('loaded', function (data) {

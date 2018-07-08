@@ -5,7 +5,9 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "node node_modules/nodemon/bin/nodemon.js --watch . ./bin/www",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "eslint": "node node_modules/eslint/bin/eslint.js ./**/*.js",
+    "bump": "npm test && npm version prerelease && git push --no-verify && git push --tags --no-verify",
+    "test": "npm run eslint"
   },
   "repository": {
     "type": "git",
