@@ -8,7 +8,8 @@ const app = require('../app')
 const debug = require('debug')('firmware-manager:server')
 const http = require('http')
 const path = require('path')
-const getGitVersionTags = require('./../git-version-tags.js')
+const getGitVersionTags = require('./../git-version-tags.js').getGitVersionTags
+const checkout = require('./../git-version-tags.js').checkout
 /*
 const appDir = path.dirname(require.main.filename)
 process.chdir(path.join(appDir, '..')) */
@@ -31,7 +32,7 @@ const logger = bunyan.createLogger(logOptions)
  * Get port from environment and store in Express.
  */
 
-const port = normalizePort(process.env.PORT || '7719')
+const port = normalizePort(process.env.PORT || '7791')
 app.set('port', port)
 
 /**
@@ -61,11 +62,22 @@ io.on('connection', async function (socket) {
 				state: 'checkGlobalUpdates'
 			})
 			const v = await getGitVersionTags()
-
 			socket.emit('loaded', v)
-
 		} catch (e) {
 			logger.error(e)
+			socket.emit('log', e)
+		}
+	})
+
+	socket.on('checkout', async function (commit) {
+		try {
+			socket.emit('log', `checkout ${commit}`)
+			await checkout(commit)
+			const v = await getGitVersionTags()
+			socket.emit('loaded', v)
+		} catch (e) {
+			logger.error(e)
+			socket.emit('log', e)
 		}
 	})
 })
@@ -99,11 +111,7 @@ function onError(error) {
 		throw error
 	}
 
-	const bind = typeof port === 'string' ?
-		'Pipe ' + port :
-		'Port ' + port
-
-	// handle specific listen errors with friendly messages
+	const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port
 	switch (error.code) {
 		case 'EACCES':
 			logger.error(bind + ' requires elevated privileges')
