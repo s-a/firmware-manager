@@ -6,7 +6,10 @@ const commands = {
 	current: `git --git-dir ${gitFolder} rev-parse --verify HEAD`,
 	fetch: `git --git-dir ${gitFolder} fetch --all`,
 	ref: `git --git-dir ${gitFolder} for-each-ref --format="%(refname:short)|%(object)" refs/tags/`,
-	contains: `git --git-dir ${gitFolder} branch --format="%(refname)" --contains`
+	contains: `git --git-dir ${gitFolder} branch --format="%(refname)" --contains`,
+	checkout: `git --git-dir ${gitFolder} checkout`,
+	stash: `git --git-dir ${gitFolder} stash`,
+	stashDrop: `git --git-dir ${gitFolder} stash drop`
 }
 
 function compare(a, b) {
@@ -67,4 +70,13 @@ async function getGitVersionTags() {
 	}
 }
 
-module.exports = getGitVersionTags
+async function checkout(commit) {
+	await execute(commands.stash)
+	await execute(commands.stashDrop)
+	await execute(commands.checkout + ' ' + commit)
+}
+
+module.exports = {
+	getGitVersionTags,
+	checkout
+}
