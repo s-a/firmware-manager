@@ -16,7 +16,7 @@ process.cwd(gitFolder)
 const commands = {
 	current: `git --git-dir ${gitFolder} rev-parse --verify HEAD`,
 	fetch: `git --git-dir ${gitFolder} fetch --all`,
-	ref: `git --git-dir ${gitFolder} for-each-ref --format="%(refname:short)|%(object)" refs/tags/`,
+	ref: `git --git-dir ${gitFolder} for-each-ref --format="%(refname:short)|%(object)" --count=300 --sort="-*authordate" refs/tags/`,
 	contains: `git --git-dir ${gitFolder} branch --format="%(refname)" --contains`,
 	checkout: `git --git-dir ${gitFolder} --work-tree=${repositoryFolder} checkout`,
 	stash: `git --git-dir ${gitFolder} --work-tree=${repositoryFolder} stash`,
