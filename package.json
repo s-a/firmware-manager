@@ -1,12 +1,12 @@
 {
   "name": "firmware-manager",
-  "version": "1.0.1-0",
+  "version": "1.0.1",
   "description": "Webinterface to manage global NPM installations",
   "scripts": {
     "start": "node ./bin/www",
     "dev": "node node_modules/nodemon/bin/nodemon.js --watch . ./bin/www",
     "eslint": "node node_modules/eslint/bin/eslint.js ./**/*.js",
-    "bump": "npm test && npm version prerelease && git push --no-verify && git push --tags --no-verify",
+    "bump": "npm test && npm version minor && git push --no-verify && git push --tags --no-verify",
     "test": "npm run eslint"
   },
   "repository": {
