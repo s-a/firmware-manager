@@ -1,8 +1,36 @@
-<h1 id="title">loading...</h1>
-<hr>
-<img id="progress" src="/images/progress.gif" alt="" srcset="">
+<div class="container">
+  <div class="row">
+    <div class="col-sm">
+      <h1 id="title">loading...</h1>
+    </div> 
+  </div>
+  <div class="row"> 
+    <div class="col-sm">
+      <div id="progress">
+        <img width="32" src="/images/progress.gif" alt="" srcset=""> <span>loading...</span>
+      </div>
+      <div id="main" style="display:none">
+        <div id="hint-success" class="alert alert-success" role="alert" style="display:none">
+          The firmware is up to date. <span class="current-version"></span>
+        </div>
+        <div id="hint-warning" class="alert alert-warning" role="alert" style="display:none">
+          The firmware is not up to date. <span class="current-version"></span>
+        </div>
+        
+        <select id="channels" onchange="populateVersions()">
+          <option id="channel-stable" value="stable">stable</option>
+          <option id="channel-beta" value="beta">beta</option>
+          <option id="channel-development" value="development">development</option>
+        </select>
 
-stabel/beta/dev
-<select id="versions"></select>
-<hr>
-<code id="log">LOG:</code>
+        <select id="versions"></select>
+      </div>
+    </div> 
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col-sm">
+      <code id="log">LOG:</code>
+    </div> 
+  </div>
+</div> 
