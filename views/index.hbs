@@ -4,28 +4,28 @@
       <h1 id="title">loading...</h1>
     </div> 
   </div>
-  <div class="row"> 
+  <div class="row" id="progress"> 
     <div class="col-sm">
-      <div id="progress">
-        <img width="32" src="/images/progress.gif" alt="" srcset=""> <span>loading...</span>
+      <img width="32" src="/images/progress.gif" alt="" srcset=""> <span>loading...</span>
+    </div>
+  </div>
+  <div class="row" id="main" style="display:none"> 
+    <div class="col-sm">
+      <div id="hint-success" class="alert alert-success" role="alert" style="display:none">
+        The firmware is up to date. <span class="current-version"></span>
       </div>
-      <div id="main" style="display:none">
-        <div id="hint-success" class="alert alert-success" role="alert" style="display:none">
-          The firmware is up to date. <span class="current-version"></span>
-        </div>
-        <div id="hint-warning" class="alert alert-warning" role="alert" style="display:none">
-          The firmware is not up to date. <span class="current-version"></span>
-        </div>
-        
-        <select id="channels" onchange="populateVersions()">
-          <option id="channel-stable" value="stable">stable</option>
-          <option id="channel-beta" value="beta">beta</option>
-          <option id="channel-development" value="development">development</option>
-        </select>
+      <div id="hint-warning" class="alert alert-warning" role="alert" style="display:none">
+        The firmware is not up to date. <span class="current-version"></span>
+      </div>
+      
+      <select id="channels" onchange="populateVersions()">
+        <option id="channel-stable" value="stable">stable</option>
+        <option id="channel-beta" value="beta">beta</option>
+        <option id="channel-development" value="development">development</option>
+      </select>
 
-        <select id="versions"></select>
-        <button onclick="useVersion()" type="button" class="btn btn-dark">Use version</button>
-      </div>
+      <select id="versions"></select>
+      <button onclick="useVersion()" type="button" class="btn btn-dark">Use version</button>
     </div> 
   </div>
   <hr>
