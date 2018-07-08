@@ -80,6 +80,14 @@
 		initialLoad = false
 	}
 
+	function useVersion() {
+		var selectVersions = $('versions')
+		var commit = selectVersions.options[selectVersions.selectedIndex].value
+		socket.emit('checkout', {
+			commit
+		})
+	}
+
 	socket.on('connected', function (data) {
 		console.log('log connected')
 		$('title').innerHTML = data.package.name + ' ' + data.package.version
@@ -106,5 +114,6 @@
 		populateVersions()
 	})
 
+	window.useVersion = useVersion // eslint-disable-line no-param-reassign
 	window.populateVersions = populateVersions // eslint-disable-line no-param-reassign
 })(window, window.io)
