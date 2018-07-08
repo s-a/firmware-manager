@@ -1,7 +1,14 @@
 const semver = require('semver')
 const util = require('util')
+const fs = require('fs')
 const exec = util.promisify(require('child_process').exec)
-const gitFolder = 'c:/git/csx-client/.git/'
+const gitFolder = process.env.REPOSITORY_FOLDER
+
+if (!fs.existsSync(gitFolder)) {
+	throw new Error(`Repository folder "${gitFolder}" does not exist.`)
+}
+process.cwd(gitFolder)
+
 const commands = {
 	current: `git --git-dir ${gitFolder} rev-parse --verify HEAD`,
 	fetch: `git --git-dir ${gitFolder} fetch --all`,
